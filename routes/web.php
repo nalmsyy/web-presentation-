@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MasterTutorialController;
 use App\Http\Controllers\TutorialDetailController;
+use App\Http\Controllers\PresentationController;
+use App\Http\Controllers\FinishedController;
+use App\Http\Controllers\ApiController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -12,7 +15,12 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// Rute Publik (Tanpa Login)
 
+Route::get('/presentation/{url_presentation}', [PresentationController::class, 'show'])->name('presentation.show');
+Route::get('/finished/{url_finished}', [FinishedController::class, 'show'])->name('finished.show');
+// Webservice API Server (Spesifikasi 10)
+Route::get('/api/{kode_matkul}', [ApiController::class, 'getTutorialByMatkul']);
 // --- RUTE YANG DIPROTEKSI LOGIN ---
 Route::middleware(['jwt.auth'])->group(function () {
     Route::get('/master-tutorial', [MasterTutorialController::class, 'index'])->name('master.index');
