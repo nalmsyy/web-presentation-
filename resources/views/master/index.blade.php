@@ -48,7 +48,7 @@
                         <a href="/finished/{{ $t->url_finished }}" target="_blank">/finished/{{ $t->url_finished }}</a>
                     </td>
                     <td class="border p-2">
-                        <a href="#" class="bg-green-500 text-white px-3 py-1 rounded text-sm">Kelola Detail</a>
+                        <a href="{{ route('details.index', $t->id) }}" class="bg-green-500 text-white px-3 py-1 rounded text-sm">Kelola Detail</a>
                     </td>
                 </tr>
                 @empty
