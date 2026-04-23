@@ -70,6 +70,51 @@ class MasterTutorialController extends Controller
         return redirect()->route('master.index')->with('success', 'Master Tutorial berhasil ditambahkan!');
     }
 
-    
+    // Menghapus data Master Tutorial beserta seluruh detailnya
+    public function destroy($id)
+    {
+        $tutorial = MasterTutorial::findOrFail($id);
+        $tutorial->delete(); // Karena di migration pakai onDelete('cascade'), detailnya otomatis ikut terhapus
+
+        return redirect()->route('master.index')->with('success', 'Master Tutorial berhasil dihapus!');
+    }
+
+    public function edit($id)
+    {
+    $tutorial = MasterTutorial::findOrFail($id);
+    $token = Session::get('jwt_token');
+    $makul = [];
+
+    try {
+        $response = Http::withToken($token)->get('https://jwt-auth-eight-neon.vercel.app/getMakul');
+        if ($response->successful() && isset($response['data'])) {
+            $makul = $response['data'];
+        }
+    } catch (\Exception $e) {
+    }
+
+    return view('master.edit', compact('tutorial', 'makul'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'mata_kuliah' => 'required',
+        ]);
+
+        $makulData = explode('|', $request->mata_kuliah);
+        $kode_matkul = $makulData[0];
+        $nama_matkul = $makulData[1] ?? '';
+
+        $tutorial = MasterTutorial::findOrFail($id);
+        $tutorial->update([
+            'judul' => $request->judul,
+            'kode_mata_kuliah' => $kode_matkul,
+            'nama_mata_kuliah' => $nama_matkul,
+        ]);
+
+        return redirect()->route('master.index')->with('success', 'Master Tutorial berhasil diperbarui!');
+    }
     
 }
